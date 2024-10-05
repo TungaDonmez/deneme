@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Orrery Web App</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h1>Orrery Web App - Solar System and NEOs</h1>
+        <p>Use mouse to rotate and zoom</p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Setup Scene, Camera, and Renderer
+        let scene = new THREE.Scene();
+        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        let renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Setup Controls
+        let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // Add Sun
+        let sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+        let sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        let sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        scene.add(sun);
+
+        // Create planets (basic example)
+        function createPlanet(size, color, distance) {
+            let geometry = new THREE.SphereGeometry(size, 32, 32);
+            let material = new THREE.MeshBasicMaterial({ color: color });
+            let planet = new THREE.Mesh(geometry, material);
+            planet.position.x = distance;
+            return planet;
+        }
+
+        // Add planets (simplified distances)
+        let mercury = createPlanet(0.3, 0xaaaaaa, 4);
+        let venus = createPlanet(0.7, 0xffaa00, 6);
+        let earth = createPlanet(0.8, 0x0000ff, 8);
+        let mars = createPlanet(0.6, 0xff0000, 10);
+
+        scene.add(mercury);
+        scene.add(venus);
+        scene.add(earth);
+        scene.add(mars);
+
+        // Adding NEO (simplified as a small sphere)
+        function createNEO(size, color, distance) {
+            let geometry = new THREE.SphereGeometry(size, 32, 32);
+            let material = new THREE.MeshBasicMaterial({ color: color });
+            let neo = new THREE.Mesh(geometry, material);
+            neo.position.x = distance;
+            return neo;
+        }
+
+        let neo1 = createNEO(0.2, 0xffffff, 12); // Example NEO
+        scene.add(neo1);
+
+        // Adjust camera position
+        camera.position.z = 20;
+
+        // Animation loop to rotate planets and render scene
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate planets around the sun (simplified orbital motion)
+            mercury.position.x = 4 * Math.cos(Date.now() * 0.001);
+            mercury.position.z = 4 * Math.sin(Date.now() * 0.001);
+
+            venus.position.x = 6 * Math.cos(Date.now() * 0.0008);
+            venus.position.z = 6 * Math.sin(Date.now() * 0.0008);
+
+            earth.position.x = 8 * Math.cos(Date.now() * 0.0006);
+            earth.position.z = 8 * Math.sin(Date.now() * 0.0006);
+
+            mars.position.x = 10 * Math.cos(Date.now() * 0.0005);
+            mars.position.z = 10 * Math.sin(Date.now() * 0.0005);
+
+            neo1.position.x = 12 * Math.cos(Date.now() * 0.0015);
+            neo1.position.z = 12 * Math.sin(Date.now() * 0.0015);
+
+            controls.update(); // Enable mouse controls
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
